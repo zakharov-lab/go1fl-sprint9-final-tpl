@@ -28,7 +28,7 @@ func TestGenerateRandomElements(t *testing.T) {
 					break
 				}
 			}
-			assert.Equal(t, false, containsBadNumber, "Слайс содержит значения выходящие из диапазона [1, %d]", Size)
+			assert.Equal(t, false, containsBadNumber, "Слайс содержит значения выходящие из диапазона [1, %d]", MaxRandNum)
 		})
 	}
 }
