@@ -78,7 +78,7 @@ func main() {
 
 	fmt.Printf("Ищем максимальное значение в %d потоков\n", Chunks)
 	startTime = time.Now()
-	multiThreadMaximum := maximum(data)
+	multiThreadMaximum := maxChunks(data)
 	elapsed = time.Since(startTime).Microseconds()
 
 	fmt.Printf("Максимальное значение элемента: %d\nВремя поиска: %d mks\n", multiThreadMaximum, elapsed)
