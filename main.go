@@ -3,6 +3,8 @@ package main
 import (
 	"fmt"
 	"math/rand"
+	"sync"
+	"time"
 )
 
 const (
@@ -39,20 +41,45 @@ func maximum(data []int) int {
 
 // maxChunks returns the maximum number of elements in a chunks.
 func maxChunks(data []int) int {
-	return 0
+	chunkSize := len(data) / Chunks
+	if chunkSize == 0 {
+		return maximum(data)
+	}
+
+	maxValues := make([]int, Chunks)
+	var wg sync.WaitGroup
+
+	for i := 0; i < Chunks; i++ {
+		start := i * chunkSize
+		end := start + chunkSize
+		if i == Chunks-1 {
+			end = len(data)
+		}
+		wg.Add(1)
+		go func(idx int, partition []int) {
+			defer wg.Done()
+			maxValues[idx] = maximum(partition)
+		}(i, data[start:end])
+	}
+	wg.Wait()
+	return maximum(maxValues)
 }
 
 func main() {
-	fmt.Printf("Генерируем %d целых чисел", Size)
-	// ваш код здесь
+	fmt.Printf("Генерируем %d целых чисел\n", Size)
+	data := generateRandomElements(Size)
 
 	fmt.Println("Ищем максимальное значение в один поток")
-	// ваш код здесь
+	startTime := time.Now()
+	oneThreadMaximum := maximum(data)
+	elapsed := time.Since(startTime).Microseconds()
 
-	//fmt.Printf("Максимальное значение элемента: %d\nВремя поиска: %d ms\n", max, elapsed)
+	fmt.Printf("Максимальное значение элемента: %d\nВремя поиска: %d mks\n", oneThreadMaximum, elapsed)
 
-	fmt.Printf("Ищем максимальное значение в %d потоков", Chunks)
-	// ваш код здесь
+	fmt.Printf("Ищем максимальное значение в %d потоков\n", Chunks)
+	startTime = time.Now()
+	multiThreadMaximum := maximum(data)
+	elapsed = time.Since(startTime).Microseconds()
 
-	//fmt.Printf("Максимальное значение элемента: %d\nВремя поиска: %d ms\n", max, elapsed)
+	fmt.Printf("Максимальное значение элемента: %d\nВремя поиска: %d mks\n", multiThreadMaximum, elapsed)
 }
