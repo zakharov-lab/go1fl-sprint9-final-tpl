@@ -1,8 +1,9 @@
 package main
 
 import (
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestGenerateRandomElements(t *testing.T) {
@@ -27,7 +28,29 @@ func TestGenerateRandomElements(t *testing.T) {
 					break
 				}
 			}
-			assert.Equal(t, containsBadNumber, false, "Слайс содержит значения меньше или равные 0 или больше максимально допустимого")
+			assert.Equal(t, containsBadNumber, false, "Слайс содержит значения выходящие из диапазона [1, 1_000_000_000]")
+		})
+	}
+}
+
+func TestMaximum(t *testing.T) {
+	tests := []struct {
+		name string
+		data []int
+		want int
+	}{
+		{name: "nil слайс", data: nil, want: 0},
+		{name: "Пустой слайс", data: []int{}, want: 0},
+		{name: "Слайс из одного элемента", data: []int{42}, want: 42},
+		{name: "Максимум в начале", data: []int{100, 53, 11, 22, 66}, want: 100},
+		{name: "Максимум в конце", data: []int{44, 33, 22, 55, 11, 123}, want: 123},
+		{name: "Макмимум в середине", data: []int{44, 55, 22, 999, 10, 22, 11}, want: 999},
+		{name: "Слайс из одинаковых элементов", data: []int{4, 4, 4, 4, 4}, want: 4},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := maximum(tt.data)
+			assert.Equal(t, tt.want, got, "Неправильно найден максимальный элемент. Найден %d, правильный %d", got, tt.want)
 		})
 	}
 }
